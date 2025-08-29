@@ -1,36 +1,50 @@
-# This is a basic workflow to help you get started with Actions
+import qrcode
+import uuid
+import os
 
-name: CI
+# Function to create a new QR code for every transaction
+def generate_transaction_qr(transaction_data, folder="qrcodes"):
+    # Ensure output folder exists
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    
+    # Generate a unique ID for the transaction
+    transaction_id = str(uuid.uuid4())
+    
+    # Combine transaction details with unique ID
+    qr_data = f"Transaction ID: {transaction_id}\nDetails: {transaction_data}"
+    
+    # Create QR Code
+    qr = qrcode.QRCode(
+        version=1,  # size of QR (1 = small, goes up as data increases)
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    
+    # Generate image
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Save QR code as PNG with transaction ID in filename
+    file_path = os.path.join(folder, f"transaction_{transaction_id}.png")
+    img.save(file_path)
+    
+    print(f"✅ QR Code generated for transaction: {transaction_id}")
+    print(f"   Saved at: {file_path}")
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+# Example usage
+if __name__ == "__main__":
+    # Imagine this is a transaction detail (can be dynamic)
+    transaction_details = {
+        "sender": "Alice",
+        "receiver": "Bob",
+        "amount": "50 ETH"
+    }
+    
+    # Convert dict to string for QR
+    details_str = ", ".join([f"{k}: {v}" for k, v in transaction_details.items()])
+    
+    # Generate QR for this transaction
+    generate_transaction_qr(details_str)
