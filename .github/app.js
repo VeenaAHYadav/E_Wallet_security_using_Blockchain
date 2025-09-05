@@ -346,14 +346,14 @@ class SecureWallet {
             
             // REPLACE WITH YOUR ACTUAL EMAILJS CREDENTIALS
             await emailjs.send(
-                 "service_rt7b701",
-                "template_qvf00iu",    // Replace with your Template ID
+                 " ",
+                " ",    // Replace with your Template ID
                 {
                     to_email: email,
                     user_name: email.split('@')[0],
                     otp_code: this.generatedOTP
                 },
-                "Jpc-PtSR0ue1Ap8xg"      // Replace with your Public Key
+                " "      // Replace with your Public Key
             );
 
             console.log('Email sent successfully');
@@ -1434,4 +1434,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing SecureWallet...');
     app = new SecureWallet();
 });
+
 
