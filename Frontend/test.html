@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaMask Test</title>
+</head>
+<body>
+    <h1>🦊 MetaMask Connection Test</h1>
+    
+    <div id="status">Not Connected</div>
+    <div id="balance">No Balance</div>
+    
+    <button id="connectBtn" style="padding: 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; font-size: 16px;">
+        Connect MetaMask
+    </button>
+
+    <script type="module">
+        async function connectWallet() {
+            try {
+                if (!window.ethereum) {
+                    alert("Please install MetaMask!");
+                    return;
+                }
+                
+                console.log("Connecting to MetaMask...");
+                
+                // Request account access
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                
+                console.log("Connected accounts:", accounts);
+                
+                // Update display
+                document.getElementById("status").innerText = `Connected: ${accounts[0]}`;
+                
+                // Get balance (optional)
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [accounts[0], 'latest']
+                });
+                
+                const balanceInEth = parseInt(balance, 16) / Math.pow(10, 18);
+                document.getElementById("balance").innerText = `Balance: ${balanceInEth.toFixed(4)} ETH`;
+                
+                alert("🎉 MetaMask Connected Successfully!");
+                
+            } catch (error) {
+                console.error("Connection failed:", error);
+                alert("Connection failed: " + error.message);
+            }
+        }
+        
+        // Hook up the button
+        document.getElementById("connectBtn").onclick = connectWallet;
+    </script>
+</body>
+</html>

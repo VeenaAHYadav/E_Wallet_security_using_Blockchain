@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SecureWallet Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .tab-navigation { margin-bottom: 20px; }
+    .tab-btn { padding: 10px 15px; margin-right: 5px; cursor: pointer; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .blockchain-connection-test {
+      background: #f0f8ff; padding: 20px; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+      max-width: 400px; margin: auto;
+    }
+    .btn { cursor: pointer; padding: 10px 20px; border: none; border-radius: 5px; }
+    .btn-primary { background: #667eea; color: white; }
+    input { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="tab-navigation">
+    <button class="tab-btn" data-tab="blockchain">🚀 Blockchain</button>
+  </div>
+
+  <div id="blockchain-tab" class="tab-pane active">
+    <div class="blockchain-connection-test">
+      <h3>🚀 Blockchain Connection</h3>
+      <div id="walletAddress" style="margin:10px 0; font-weight:bold;">Not Connected</div>
+      <div id="contractBalance" style="margin:10px 0; color:#667eea;">No Balance</div>
+      <button id="connectWalletBtn" class="btn btn-primary">🦊 Connect MetaMask</button>
+      <input id="recipient" placeholder="Recipient Address">
+      <input id="amount" placeholder="Amount in ETH">
+      <button id="sendTxBtn" class="btn btn-primary">💸 Send ETH</button>
+    </div>
+  </div>
+
+  <script>
+    async function connectWallet() {
+      if (!window.ethereum) return alert("Install MetaMask!");
+      const [addr] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      document.getElementById("walletAddress").innerText = "Connected: " + addr;
+      const bal = await window.ethereum.request({ method: 'eth_getBalance', params: [addr, 'latest'] });
+      document.getElementById("contractBalance").innerText = (parseInt(bal,16)/1e18).toFixed(4) + " ETH";
+    }
+    async function sendEth() {
+      const to = document.getElementById("recipient").value;
+      const amt = document.getElementById("amount").value;
+      if (!to||!amt) return alert("Enter both fields!");
+      const [from] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      await window.ethereum.request({
+        method:'eth_sendTransaction',
+        params:[{ from, to, value: '0x' + (parseFloat(amt)*1e18).toString(16) }]
+      });
+      alert("Transaction sent!");
+    }
+    document.getElementById("connectWalletBtn").onclick = connectWallet;
+    document.getElementById("sendTxBtn").onclick = sendEth;
+  </script>
+</body>
+</html>
