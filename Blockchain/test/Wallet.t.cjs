@@ -17,12 +17,11 @@ describe("Secure E-Wallet", function () {
     token = await Token.deploy(initialSupply, owner.address);
     await token.waitForDeployment();
 
-    // Deploy Wallet with token address
+
     Wallet = await ethers.getContractFactory("Wallet");
     wallet = await Wallet.deploy(await token.getAddress());
     await wallet.waitForDeployment();
 
-    // Transfer some tokens to user1
     await token.transfer(user1.address, ethers.parseUnits("1000", 18));
   });
 
@@ -39,18 +38,16 @@ describe("Secure E-Wallet", function () {
   });
 
   it("should allow withdrawal of tokens", async function () {
-    // Deposit 300
+    
     await token.connect(user1).approve(await wallet.getAddress(), ethers.parseUnits("300", 18));
     await wallet.connect(user1).deposit(ethers.parseUnits("300", 18));
 
-    // Withdraw 100
+   
     await wallet.connect(user1).withdraw(ethers.parseUnits("100", 18));
 
-    // Wallet internal balance = 200
     const remainingBalance = await wallet.balances(user1.address);
     expect(remainingBalance).to.equal(ethers.parseUnits("200", 18));
 
-    // User1 should have: 1000 - 300 deposit + 100 withdrawn = 800
     const userBalance = await token.balanceOf(user1.address);
     expect(userBalance).to.equal(ethers.parseUnits("800", 18));
   });
@@ -64,3 +61,4 @@ describe("Secure E-Wallet", function () {
     ).to.be.revertedWith("Insufficient balance");
   });
 });
+
