@@ -1,1 +1,37 @@
+E_Wallet_security_using_Blockchain/
+│
+├── frontend/
+│   ├── index.html
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│       ├── app.js              # OTP, login, registration, balance, send, receive
+│       └── blockchain.js        # Web3 / MetaMask interaction              
+│
+├── backend/
+│   ├── honeypots/
+│       ├── sqlHoneypot.js
+│       ├── xssHoneypot.js
+│       ├── csrfHoneypot.js
+│       ├── ssrfHoneypot.js
+│       ├── bruteForceHoneypot.js
+│       ├── adminHoneypot.js
+│       └── traversalHoneypot.js
+│
+├── blockchain/
+│   ├── contracts/
+│   │     ├── Honeypot.sol
+│   │     ├── Lock.sol
+│   │     ├── SEWToken.sol
+│   │     └── Wallet.sol
+│   │
+│   ├── scripts/
+│   │    ├── deployHoneypot.js
+│   │    ├── monitor.js
+│   │    └── deploy.cjs
+│   └── config.js
+│               
+├── package.json
+├── package-lock.json
+└── README.md
 
