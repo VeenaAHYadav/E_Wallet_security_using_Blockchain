@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Honeypot {
@@ -23,3 +22,4 @@ contract Honeypot {
         emit HoneypotTriggered(msg.sender, "Tried to recover wallet");
     }
 }
+
