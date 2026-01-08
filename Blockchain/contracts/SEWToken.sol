@@ -1,13 +1,11 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SEWToken is ERC20, Ownable {
     constructor(uint256 initialSupply, address initialOwner)
         ERC20("Secure E-Wallet Token", "SEW")
-        Ownable(initialOwner)   // ✅ pass initialOwner instead of msg.sender
+        Ownable(initialOwner)  
     {
         _mint(initialOwner, initialSupply * 10 ** decimals());
     }
@@ -17,4 +15,5 @@ contract SEWToken is ERC20, Ownable {
         _mint(to, amount * 10 ** decimals());
     }
 }
+
 
