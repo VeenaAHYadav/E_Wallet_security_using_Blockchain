@@ -102,7 +102,7 @@ Firebase Logs
 
 ---
 
-⚠️ Limitations
+## ⚠️ Limitations
 
 - Depends on internet connectivity
 - Blockchain confirmation delay
@@ -111,7 +111,7 @@ Firebase Logs
 
 ---
 
-🔮 Future Enhancements
+## 🔮 Future Enhancements
 
 - Multi-blockchain support
 - DeFi integration
@@ -121,7 +121,7 @@ Firebase Logs
 
 ---
 
-👩‍💻 Contributors
+## 👩‍💻 Contributors
 
 Gunavathi.C
 Harshitha.N
@@ -129,7 +129,7 @@ Veena.AH
 
 ---
 
-📜 License
+## 📜 License
 This project is developed for academic purposes only.
 
 
