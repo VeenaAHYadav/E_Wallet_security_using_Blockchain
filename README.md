@@ -124,7 +124,6 @@ Firebase Logs
 ## 👩‍💻 Contributors
 
 Gunavathi.C
-Harshitha.N
 Veena.AH
 
 ---
