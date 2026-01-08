@@ -73,7 +73,6 @@ Honeypot Layer
 ↓
 Firebase Logs
 
-
 ---
 
 ## ⛽ Gas Fee Optimization
@@ -94,7 +93,6 @@ Firebase Logs
 
 ---
 
-
 ### Prerequisites
 - Node.js (v14+)
 - MetaMask Extension
@@ -102,12 +100,16 @@ Firebase Logs
 - Firebase Project
 - Infura or Alchemy API Key
 
+---
+
 ⚠️ Limitations
 
 - Depends on internet connectivity
 - Blockchain confirmation delay
 - Testnet-based implementation
 - Requires MetaMask extension
+
+---
 
 🔮 Future Enhancements
 
@@ -117,12 +119,15 @@ Firebase Logs
 - Advanced privacy mechanisms
 - Scalability optimization
 
+---
 
 👩‍💻 Contributors
 
 Gunavathi.C
 Harshitha.N
 Veena.AH
+
+---
 
 📜 License
 This project is developed for academic purposes only.
