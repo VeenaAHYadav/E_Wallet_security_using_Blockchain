@@ -1,7 +1,4 @@
-// SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.28;
-
 import "./SEWToken.sol";
 
 contract Wallet {
@@ -23,4 +20,5 @@ contract Wallet {
         require(token.transfer(msg.sender, amount), "Transfer failed");
     }
 }
+
 
